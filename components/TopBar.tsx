@@ -1,16 +1,13 @@
 'use client';
-import { Sun, Moon, Plus } from 'lucide-react';
-import DarkToggle from './DarkToggle';
-import { useRouter } from 'next/navigation';
+
+import ThemeToggle from './ThemeToggle';
+
 export default function TopBar() {
   return (
-    <div className="flex items-center justify-between px-4 py-3 bg-white/60 dark:bg-gray-800/60 backdrop-blur border-b">
-      <div className="flex items-center gap-4">
-        <h2 className="text-lg font-semibold">RikTech AI — Builder</h2>
-      </div>
-      <div className="flex items-center gap-3">
-        <DarkToggle />
-      </div>
+    <div className="w-full flex items-center justify-between p-4 border-b dark:border-gray-700 bg-white dark:bg-gray-900">
+      <h1 className="font-bold text-xl">RikTech AI Builder</h1>
+
+      <ThemeToggle />
     </div>
   );
 }
