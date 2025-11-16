@@ -1,71 +1,63 @@
 'use client';
-
-import { useEditorStore } from '@/store/editorStore';
+import { useStore } from '../stores/useStore';
+import { Trash2 } from 'lucide-react';
 
 export default function PropertiesPanel() {
-  const selectedNode = useEditorStore((s) => s.selectedNode);
-  const nodes = useEditorStore((s) => s.nodes);
-  const updateNode = useEditorStore((s) => s.updateNode);
+  const selectedId = useStore(s => s.selectedId);
+  const nodes = useStore(s => s.nodes);
+  const updateNode = useStore(s => s.updateNode);
+  const removeNode = useStore(s => s.removeNode);
 
-  const node = nodes.find((n) => n.id === selectedNode);
-
-  if (!node)
-    return (
-      <div className="p-4 text-gray-500 dark:text-gray-300">
-        Pilih sebuah blok untuk mengedit.
-      </div>
-    );
+  const node = nodes.find(n => n.id === selectedId) || null;
+  if (!node) {
+    return <div className="w-80 bg-white/50 dark:bg-gray-800 p-4 border-l">No node selected</div>;
+  }
 
   return (
-    <div className="p-4 space-y-4">
-      <h2 className="text-xl font-bold mb-4">Properties</h2>
+    <div className="w-80 bg-white/50 dark:bg-gray-800 p-4 border-l overflow-auto">
+      <div className="flex justify-between items-center">
+        <h4 className="font-semibold">Properties</h4>
+        <button onClick={() => removeNode(node.id)} className="text-red-500"><Trash2 /></button>
+      </div>
 
-      <div>
-        <label className="font-semibold">Nama</label>
-        <input
-          className="w-full p-2 border dark:bg-gray-800"
-          value={node.name}
-          onChange={(e) => updateNode(node.id, { name: e.target.value })}
-        />
+      <div className="mt-3">
+        <label className="block text-sm">Name</label>
+        <input value={node.name} onChange={e => updateNode(node.id, { name: e.target.value })} className="w-full mt-1 p-2 rounded border bg-white/80 dark:bg-gray-900"/>
+      </div>
+
+      <div className="mt-3">
+        <label className="block text-sm">Type</label>
+        <select value={node.type} onChange={e => updateNode(node.id, { type: e.target.value as any })} className="w-full mt-1 p-2 rounded border bg-white/80 dark:bg-gray-900">
+          <option value="text">Text Response</option>
+          <option value="ai">AI Response</option>
+          <option value="condition">Condition</option>
+          <option value="delay">Delay</option>
+          <option value="input">Input User</option>
+        </select>
       </div>
 
       {node.type === 'text' && (
-        <div>
-          <label className="font-semibold">Konten Teks</label>
-          <textarea
-            className="w-full p-2 border h-24 dark:bg-gray-800"
-            value={node.content}
-            onChange={(e) => updateNode(node.id, { content: e.target.value })}
-          />
+        <div className="mt-3">
+          <label className="block text-sm">Content</label>
+          <textarea value={node.content} onChange={e => updateNode(node.id, { content: e.target.value })} className="w-full mt-1 p-2 rounded border bg-white/80 dark:bg-gray-900" rows={4}/>
         </div>
       )}
 
       {node.type === 'ai' && (
-        <div>
-          <label className="font-semibold">Prompt AI</label>
-          <textarea
-            className="w-full p-2 border h-24 dark:bg-gray-800"
-            value={node.prompt}
-            onChange={(e) => updateNode(node.id, { prompt: e.target.value })}
-          />
-        </div>
+        <>
+          <div className="mt-3">
+            <label className="block text-sm">AI Prompt</label>
+            <textarea value={node.prompt} onChange={e => updateNode(node.id, { prompt: e.target.value })} className="w-full mt-1 p-2 rounded border bg-white/80 dark:bg-gray-900" rows={4}/>
+          </div>
+        </>
       )}
 
       {node.type === 'condition' && (
-        <div>
-          <label className="font-semibold">Jumlah Branch</label>
-          <input
-            type="number"
-            min="2"
-            max="5"
-            className="w-full p-2 border dark:bg-gray-800"
-            value={node.branches || 2}
-            onChange={(e) =>
-              updateNode(node.id, { branches: Number(e.target.value) })
-            }
-          />
+        <div className="mt-3">
+          <label className="block text-sm">Branches</label>
+          <input type="number" value={node.branches || 2} onChange={e => updateNode(node.id, { branches: parseInt(e.target.value||'2') })} className="w-full mt-1 p-2 rounded border bg-white/80 dark:bg-gray-900"/>
         </div>
       )}
     </div>
   );
-                                                  }
+}
